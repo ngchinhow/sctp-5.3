@@ -1,36 +1,36 @@
-import { PokemonClient } from 'pokenode-ts';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Image } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import PokemonStackScreen from './component/pokemon';
+import berryDark from './assets/grape-dark.png';
+import berry from './assets/grape.png';
+import pokedexDark from './assets/pokedex-dark.png';
+import pokedex from './assets/pokedex.png';
+import BerryStackScreen from './component/berry';
 
-const client = new PokemonClient();
-
-async function listPokemons() {
-  try {
-    const response = await client.listPokemons();
-    return response.results;
-  } catch (error) {
-    console.error(error);
-  }
-}
+const Tab = createBottomTabNavigator();
 
 export default function App() {
 
-
   return (
-    <View style={styles.container}>
-      <Pressable
-        onPress={listPokemons}
-      >
-        <Text>Open up App.js to start working on your app!</Text>
-      </Pressable>
-    </View>
+    <NavigationContainer>
+      <Tab.Navigator screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused, size }) => {
+          let imageResource;
+
+          if (route.name === 'Pokemon') {
+            imageResource = focused ? pokedexDark : pokedex;
+          } else if (route.name === 'Berry') {
+            imageResource = focused ? berryDark : berry;
+          }
+
+          return <Image style={{ height: size, width: size }} source={imageResource} />
+        },
+        headerShown: false
+      })}>
+        <Tab.Screen name='Pokemon' component={PokemonStackScreen} />
+        <Tab.Screen name='Berry' component={BerryStackScreen} />
+      </Tab.Navigator>
+    </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
